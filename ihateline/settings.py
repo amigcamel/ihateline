@@ -12,5 +12,3 @@ config = ConfigParser()
 config.read(join(ROOT_DIR, 'credentials.conf'))
 EMAIL = config['main']['email']
 PASSWORD = config['main']['password']
-
-
