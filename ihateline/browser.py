@@ -11,6 +11,8 @@ from .settings import (
 class Browser:
     """Browser handler."""
 
+    _chats = []
+
     def __init__(self):
         """Add LINE chrome extension."""
         chrome_options = Options()
@@ -42,16 +44,21 @@ class Browser:
         """Select friend."""
 
     @property
-    def chats_list(self):
+    def chats(self):
         """List all firends."""
-        (
-            self.driver
-            .find_element_by_css_selector('li[data-type=chats_list')
-            .click()
-        )
-        es = self.driver.find_elements_by_css_selector('#_chat_list_scroll li')
-        return {
-            e.get_attribute('title'):
-            e.find_element_by_tag_name('div').get_attribute('data-chatid')
-            for e in es
-        }
+        if not self._chats:
+            (
+                self.driver
+                .find_element_by_css_selector('li[data-type=chats_list')
+                .click()
+            )
+            es = (
+                self.driver
+                .find_elements_by_css_selector('#_chat_list_scroll li')
+            )
+            self._chats = {
+                e.get_attribute('title'):
+                e.find_element_by_tag_name('div').get_attribute('data-chatid')
+                for e in es
+            }
+        return self._chats
