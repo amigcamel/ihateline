@@ -5,6 +5,7 @@ import re
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from ajilog import logger
 
 from .settings import (
     EXECUTABLE_PATH, EXTENSTION_PATH, UID, EMAIL, PASSWORD
@@ -34,6 +35,19 @@ class Browser:
         self.driver.find_element_by_id('line_login_pwd').send_keys(PASSWORD)
         sleep(0.5)
         self.driver.find_element_by_id('login_btn').click()
+        sleep(1.5)
+        while True:
+            verify_code = (
+                self.driver
+                .find_element_by_css_selector('#login_content div.mdCMN01Code')
+                .text
+            )
+            if verify_code:
+                logger.debug(f'input verify code: ({verify_code})')
+            else:
+                logger.info('Loggged in successfully!')
+                break
+            sleep(1)
 
     def logout(self):
         """Logout LINE."""
