@@ -7,7 +7,9 @@ from .settings import (
     EXECUTABLE_PATH, EXTENSTION_PATH, UID, EMAIL, PASSWORD
 )
 
+
 class Browser:
+    """Browser handler."""
 
     def __init__(self):
         """Add LINE chrome extension."""
@@ -18,7 +20,6 @@ class Browser:
             chrome_options=chrome_options,
         )
         self.driver.get(f'chrome-extension://{UID}/index.html')
-
 
     def login(self):
         """Login LINE."""
@@ -38,5 +39,16 @@ class Browser:
         """Select friend."""
 
     @property
-    def friends(self):
+    def chats_list(self):
         """List all firends."""
+        (
+            self.driver
+            .find_element_by_css_selector('li[data-type=chats_list')
+            .click()
+        )
+        es = self.driver.find_elements_by_css_selector('#_chat_list_scroll li')
+        return {
+            e.get_attribute('title'):
+            e.find_element_by_tag_name('div').get_attribute('data-chatid')
+            for e in es
+        }
