@@ -144,3 +144,5 @@ tags
 # End of https://www.gitignore.io/api/vim,osx,python
 
 src/chromedriver
+ipython_config.py
+credentials.conf
