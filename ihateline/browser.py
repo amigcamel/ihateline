@@ -1,7 +1,10 @@
 """Main."""
 from time import sleep
+import re
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
 
 from .settings import (
     EXECUTABLE_PATH, EXTENSTION_PATH, UID, EMAIL, PASSWORD
@@ -37,11 +40,30 @@ class Browser:
         sleep(0.3)
         self.driver.find_element_by_id('setting_logout').click()
 
-    def send_msg(self):
-        """Send message."""
+    def send_msg(self, message):
+        """Send message.
 
-    def select_friend(self):
-        """Select friend."""
+        options
+        `message`: strings or text
+        """
+        chat_box = self.driver.find_element_by_id('_chat_room_input')
+        chat_box.click()
+        sleep(0.3)
+        chat_box.send_keys(f'{message}{Keys.ENTER}')
+
+    def select_friend(self, name_or_id):
+        """Select friend.
+
+        options
+        `name_or_id`: LINE name of id
+        """
+        if not re.match(r'[0-9a-z]{33}', name_or_id):
+            name_or_id = self.chats[name_or_id]
+        (
+            self.driver
+            .find_element_by_css_selector(f'[data-chatid={name_or_id}]')
+            .click()
+        )
 
     @property
     def chats(self):
