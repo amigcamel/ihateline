@@ -31,6 +31,9 @@ class Browser:
 
     def logout(self):
         """Logout LINE."""
+        self.driver.find_element_by_class_name('mdGHD01SettingBtn').click()
+        sleep(0.3)
+        self.driver.find_element_by_id('setting_logout').click()
 
     def send_msg(self):
         """Send message."""
