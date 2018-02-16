@@ -14,7 +14,8 @@ from .settings import (
 class Browser:
     """Browser handler."""
 
-    _chats = []
+    _chats = None
+    _friends = None
 
     def __init__(self):
         """Add LINE chrome extension."""
@@ -84,3 +85,23 @@ class Browser:
                 for e in es
             }
         return self._chats
+
+    @property
+    def friends(self):
+        """Firends."""
+        if not self._friends:
+            (
+                self.driver
+                .find_element_by_css_selector('li[data-type=friends_list')
+                .click()
+            )
+            es = (
+                self.driver
+                .find_elements_by_css_selector('#contact_wrap_friends ul li')
+            )
+            self._friends = {
+                e.get_attribute('title'):
+                e.get_attribute('data-mid')
+                for e in es
+            }
+        return self._friends
