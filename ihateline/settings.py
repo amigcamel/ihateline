@@ -7,6 +7,9 @@ UID = 'ophjlpahpchlmihnnnihgmmeilfjmjjc'
 EXECUTABLE_PATH = join(ROOT_DIR, 'src/chromedriver')
 EXTENSTION_PATH = join(ROOT_DIR, f'src/Extensions/{UID}/2.1.0_0.crx')
 
+# session info cache
+SESSION_CACHE_PATH = join(ROOT_DIR, '.session')
+
 # credentials
 config = ConfigParser()
 config.read(join(ROOT_DIR, 'credentials.conf'))
