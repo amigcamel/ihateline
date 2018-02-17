@@ -143,11 +143,14 @@ class Browser:
         """
         if not re.match(r'[0-9a-z]{33}', name_or_id):
             name_or_id = self.chats[name_or_id]
-        (
+        ele = (
             self.driver
             .find_element_by_css_selector(f'[data-chatid={name_or_id}]')
-            .click()
         )
+        # scroll to the element to make it visible
+        # ref: https://stackoverflow.com/a/41744403/1105489
+        ele.location_once_scrolled_into_view
+        ele.click()
 
     @property
     def chats(self):
