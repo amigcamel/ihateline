@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+  ihateline:
+    restart: always
+    build: . 
+    depends_on:
+      - hub
+    command: /bin/sh -c 'sleep 10000'
+  chrome:
+    image: selenium/node-chrome:3.9.1-actinium
+    depends_on:
+      - hub
+    shm_size: 4g
+    environment:
+      HUB_HOST: hub
+  hub:
+    image: selenium/hub:3.9.1-actinium
+    ports:
+      - 44444:4444 
