@@ -5,4 +5,4 @@ Dockerfile
 .gitignore
 README.md
 ipython_config.py
-
+.session
