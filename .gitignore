@@ -146,3 +146,4 @@ tags
 src/chromedriver
 ipython_config.py
 credentials.conf
+.session
