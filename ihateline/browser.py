@@ -14,7 +14,7 @@ from selenium.common.exceptions import (
 from ajilog import logger
 
 from .settings import (
-    EXECUTABLE_PATH, EXTENSTION_PATH, SESSION_CACHE_PATH, UID, EMAIL, PASSWORD
+    COMMAND_EXECUTOR, EXTENSTION_PATH, SESSION_CACHE_PATH, UID, EMAIL, PASSWORD
 )
 
 
@@ -65,9 +65,9 @@ class Browser:
                 )
                 logger.debug(f'resue: {info}')
             else:
-                self.driver = webdriver.Chrome(
-                    executable_path=EXECUTABLE_PATH,
-                    chrome_options=chrome_options,
+                self.driver = RemotePatch(
+                    command_executor=COMMAND_EXECUTOR,
+                    desired_capabilities=chrome_options.to_capabilities(),
                 )
         self.driver.get(f'chrome-extension://{UID}/index.html')
         sleep(0.5)
