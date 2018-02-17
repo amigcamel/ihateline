@@ -1,5 +1,7 @@
 """Main."""
+from os.path import isfile
 from time import sleep
+import json
 import re
 
 from selenium import webdriver
@@ -12,7 +14,7 @@ from selenium.common.exceptions import (
 from ajilog import logger
 
 from .settings import (
-    EXECUTABLE_PATH, EXTENSTION_PATH, UID, EMAIL, PASSWORD
+    EXECUTABLE_PATH, EXTENSTION_PATH, SESSION_CACHE_PATH, UID, EMAIL, PASSWORD
 )
 
 
@@ -43,6 +45,10 @@ class Browser:
 
     def __init__(self, command_executor=None, reuse_session_id=None):
         """Add LINE chrome extension."""
+        info = None
+        if isfile(SESSION_CACHE_PATH):
+            with open(SESSION_CACHE_PATH) as f:
+                info = json.load(f)
         chrome_options = Options()
         chrome_options.add_extension(EXTENSTION_PATH)
         if command_executor:
@@ -52,10 +58,17 @@ class Browser:
                 reuse_session_id=reuse_session_id,
             )
         else:
-            self.driver = webdriver.Chrome(
-                executable_path=EXECUTABLE_PATH,
-                chrome_options=chrome_options,
-            )
+            if info:
+                self.driver = RemotePatch(
+                    desired_capabilities=chrome_options.to_capabilities(),
+                    **info
+                )
+                logger.debug(f'resue: {info}')
+            else:
+                self.driver = webdriver.Chrome(
+                    executable_path=EXECUTABLE_PATH,
+                    chrome_options=chrome_options,
+                )
         self.driver.get(f'chrome-extension://{UID}/index.html')
         sleep(0.5)
         # browser may confirm leaving of the current page
@@ -102,6 +115,14 @@ class Browser:
         self.driver.find_element_by_class_name('mdGHD01SettingBtn').click()
         sleep(0.3)
         self.driver.find_element_by_id('setting_logout').click()
+        info = {
+            'command_executor': self.driver.command_executor._url,
+            'reuse_session_id': self.driver.session_id,
+        }
+
+        with open(SESSION_CACHE_PATH, 'w') as f:
+            json.dump(info, f)
+            logger.debug(f'dump session cache: {info}')
 
     def send_msg(self, message):
         """Send message.
