@@ -5,7 +5,10 @@ import re
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import (
+        NoAlertPresentException,
+        NoSuchElementException,
+)
 from ajilog import logger
 
 from .settings import (
@@ -77,11 +80,16 @@ class Browser:
         self.driver.find_element_by_id('login_btn').click()
         sleep(1.5)
         while True:
-            verify_code = (
-                self.driver
-                .find_element_by_css_selector('#login_content div.mdCMN01Code')
-                .text
-            )
+            try:
+                verify_code = (
+                    self.driver
+                    .find_element_by_css_selector(
+                        '#login_content div.mdCMN01Code')
+                    .text
+                )
+            except NoSuchElementException:
+                logger.debug('no verify code needed.')
+                break
             if verify_code:
                 logger.debug(f'input verify code: ({verify_code})')
             else:
