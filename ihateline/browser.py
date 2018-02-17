@@ -5,11 +5,31 @@ import re
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoAlertPresentException
 from ajilog import logger
 
 from .settings import (
     EXECUTABLE_PATH, EXTENSTION_PATH, UID, EMAIL, PASSWORD
 )
+
+
+class RemotePatch(webdriver.Remote):
+    """Patch for webdriver.Remote."""
+
+    def __init__(self, *args, **kwargs):
+        """Patch webdriver.Remote.execute."""
+        self.reuse_session_id = kwargs.pop('reuse_session_id', None)
+        super().__init__(*args, **kwargs)
+        if self.reuse_session_id:
+            self.session_id = self.reuse_session_id
+
+    def execute(self, command, params=None):
+        """Patch for `webdriver.Remote.execute`."""
+        if command == 'newSession' and self.reuse_session_id:
+            logger.debug(f'reuse session: {self.reuse_session_id}')
+            return {'success': 0, 'value': None, 'sessionId': self.session_id}
+        else:
+            return super().execute(command, params)
 
 
 class Browser:
@@ -18,21 +38,41 @@ class Browser:
     _chats = None
     _friends = None
 
-    def __init__(self):
+    def __init__(self, command_executor=None, reuse_session_id=None):
         """Add LINE chrome extension."""
         chrome_options = Options()
         chrome_options.add_extension(EXTENSTION_PATH)
-        self.driver = webdriver.Chrome(
-            executable_path=EXECUTABLE_PATH,
-            chrome_options=chrome_options,
-        )
+        if command_executor:
+            self.driver = RemotePatch(
+                command_executor=command_executor,
+                desired_capabilities=chrome_options.to_capabilities(),
+                reuse_session_id=reuse_session_id,
+            )
+        else:
+            self.driver = webdriver.Chrome(
+                executable_path=EXECUTABLE_PATH,
+                chrome_options=chrome_options,
+            )
         self.driver.get(f'chrome-extension://{UID}/index.html')
+        sleep(0.5)
+        # browser may confirm leaving of the current page
+        try:
+            self.driver.switch_to.alert.accept()
+        except NoAlertPresentException:
+            pass
 
     def login(self):
         """Login LINE."""
         sleep(0.5)
-        self.driver.find_element_by_id('line_login_email').send_keys(EMAIL)
-        self.driver.find_element_by_id('line_login_pwd').send_keys(PASSWORD)
+        # get email and password fields
+        email_field = self.driver.find_element_by_id('line_login_email')
+        pass_field = self.driver.find_element_by_id('line_login_pwd')
+        # clear fields
+        email_field.clear()
+        pass_field.clear()
+        # send keys
+        email_field.send_keys(EMAIL)
+        pass_field.send_keys(PASSWORD)
         sleep(0.5)
         self.driver.find_element_by_id('login_btn').click()
         sleep(1.5)
