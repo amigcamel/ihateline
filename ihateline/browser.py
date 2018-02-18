@@ -3,6 +3,7 @@ from os.path import isfile
 from time import sleep
 import json
 import re
+import os
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -10,6 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import (
         NoAlertPresentException,
         NoSuchElementException,
+        WebDriverException,
 )
 from ajilog import logger
 
@@ -69,7 +71,14 @@ class Browser:
                     command_executor=COMMAND_EXECUTOR,
                     desired_capabilities=chrome_options.to_capabilities(),
                 )
-        self.driver.get(f'chrome-extension://{UID}/index.html')
+        try:
+            self.driver.get(f'chrome-extension://{UID}/index.html')
+        except WebDriverException as e:
+            if 'No active session with ID' in e.args[0]:
+                logger.warn('session seems dead, create a new one...')
+                os.remove(SESSION_CACHE_PATH)
+                self.__init__()
+
         sleep(0.5)
         # browser may confirm leaving of the current page
         try:
