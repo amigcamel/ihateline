@@ -124,11 +124,14 @@ class Browser:
         self.driver.find_element_by_class_name('mdGHD01SettingBtn').click()
         sleep(0.3)
         self.driver.find_element_by_id('setting_logout').click()
+        self.cache_session_info()
+
+    def cache_session_info(self):
+        """Cache session info."""
         info = {
             'command_executor': self.driver.command_executor._url,
             'reuse_session_id': self.driver.session_id,
         }
-
         with open(SESSION_CACHE_PATH, 'w') as f:
             json.dump(info, f)
             logger.debug(f'dump session cache: {info}')
