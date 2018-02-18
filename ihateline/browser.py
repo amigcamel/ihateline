@@ -72,22 +72,23 @@ class Browser:
                     desired_capabilities=chrome_options.to_capabilities(),
                 )
         try:
-            self.driver.get(f'chrome-extension://{UID}/index.html')
+            # test if session still alive
+            logger.info(f'current url: {self.driver.current_url}')
         except WebDriverException as e:
             if 'No active session with ID' in e.args[0]:
                 logger.warn('session seems dead, create a new one...')
                 os.remove(SESSION_CACHE_PATH)
                 self.__init__()
 
+    def login(self):
+        """Login LINE."""
+        self.driver.get(f'chrome-extension://{UID}/index.html')
         sleep(0.5)
         # browser may confirm leaving of the current page
         try:
             self.driver.switch_to.alert.accept()
         except NoAlertPresentException:
             pass
-
-    def login(self):
-        """Login LINE."""
         sleep(0.5)
         # get email and password fields
         email_field = self.driver.find_element_by_id('line_login_email')
