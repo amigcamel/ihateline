@@ -3,6 +3,7 @@ from os.path import isfile
 from time import sleep
 import json
 import re
+import os
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -10,11 +11,12 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import (
         NoAlertPresentException,
         NoSuchElementException,
+        WebDriverException,
 )
 from ajilog import logger
 
 from .settings import (
-    EXECUTABLE_PATH, EXTENSTION_PATH, SESSION_CACHE_PATH, UID, EMAIL, PASSWORD
+    COMMAND_EXECUTOR, EXTENSTION_PATH, SESSION_CACHE_PATH, UID, EMAIL, PASSWORD
 )
 
 
@@ -65,11 +67,18 @@ class Browser:
                 )
                 logger.debug(f'resue: {info}')
             else:
-                self.driver = webdriver.Chrome(
-                    executable_path=EXECUTABLE_PATH,
-                    chrome_options=chrome_options,
+                self.driver = RemotePatch(
+                    command_executor=COMMAND_EXECUTOR,
+                    desired_capabilities=chrome_options.to_capabilities(),
                 )
-        self.driver.get(f'chrome-extension://{UID}/index.html')
+        try:
+            self.driver.get(f'chrome-extension://{UID}/index.html')
+        except WebDriverException as e:
+            if 'No active session with ID' in e.args[0]:
+                logger.warn('session seems dead, create a new one...')
+                os.remove(SESSION_CACHE_PATH)
+                self.__init__()
+
         sleep(0.5)
         # browser may confirm leaving of the current page
         try:

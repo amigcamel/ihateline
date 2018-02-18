@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  ihateline:
+    restart: always
+    build: . 
+    depends_on:
+      - chrome
+    environment:
+      - "TZ=Asia/Taipei"
+    command: /bin/sh -c 'sleep 10000'
+  chrome:
+    image: selenium/standalone-chrome 
+    shm_size: 4g
+    ports:
+      - 44444:4444
+    environment:
+      - "TZ=Asia/Taipei"
