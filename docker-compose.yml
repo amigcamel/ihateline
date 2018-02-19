@@ -16,3 +16,5 @@ services:
       - 44444:4444
     environment:
       - "TZ=Asia/Taipei"
+  cron:
+    build: ./cron 
