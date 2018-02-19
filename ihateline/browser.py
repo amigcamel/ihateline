@@ -147,6 +147,13 @@ class Browser:
         chat_box.click()
         sleep(0.3)
         chat_box.send_keys(f'{message}{Keys.ENTER}')
+        # randomly click at any place to loose focus on the input box
+        # so that LINE will still send sound notifications to your mobile
+        (
+            self.driver
+            .find_element_by_css_selector('li[data-type=friends_list')
+            .click()
+        )
 
     def select_friend(self, name_or_id):
         """Select friend.
