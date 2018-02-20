@@ -1,5 +1,5 @@
-FROM alpine:3.6
-
+FROM python:3.6.4-alpine3.7
+WORKDIR /home/root
 RUN apk update
 RUN apk upgrade
 RUN apk add ca-certificates && update-ca-certificates
@@ -10,4 +10,5 @@ ENV TZ=Asia/Taipei
 RUN rm -rf /var/cache/apk/*
 
 COPY crontabs /etc/crontabs/root
+COPY client.py /home/root
 CMD ["crond", "-f", "-d", "8"]
