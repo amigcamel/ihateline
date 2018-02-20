@@ -4,6 +4,8 @@ import os
 
 from ajilog import logger
 
+from ihateline.browser import Browser
+
 
 class TCPHandler(socketserver.StreamRequestHandler):
     """TCP server."""
@@ -20,7 +22,11 @@ class TCPHandler(socketserver.StreamRequestHandler):
 
 
 if __name__ == "__main__":
-    HOST, PORT = 'localhost', 9999
+    b = Browser()
+    b.login()
+    b.cache_session_info()
+    HOST, PORT = '', 9999
 
     with socketserver.TCPServer((HOST, PORT), TCPHandler) as server:
+        logger.info('server started')
         server.serve_forever()
