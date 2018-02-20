@@ -2,7 +2,7 @@
 import socket
 import sys
 
-HOST, PORT = 'cron', 9999
+HOST, PORT = 'ihateline', 9999
 data = " ".join(sys.argv[1:])
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
