@@ -20,3 +20,5 @@ services:
     build: ./cron 
     depends_on:
       - ihateline
+    volumes:
+      - "./cron/crontabs:/etc/crontabs/root"

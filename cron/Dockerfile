@@ -8,7 +8,5 @@ RUN apk add --update tzdata
 ENV TZ=Asia/Taipei
 # Clean APK cache
 RUN rm -rf /var/cache/apk/*
-
-COPY crontabs /etc/crontabs/root
 COPY client.py /home/root
 CMD ["crond", "-f", "-d", "8"]
