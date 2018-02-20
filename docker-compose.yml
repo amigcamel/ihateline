@@ -8,7 +8,7 @@ services:
       - chrome
     environment:
       - "TZ=Asia/Taipei"
-    command: /bin/sh -c 'sleep 10000'
+    command: python server.py
   chrome:
     image: selenium/standalone-chrome 
     shm_size: 4g
@@ -16,3 +16,7 @@ services:
       - 44444:4444
     environment:
       - "TZ=Asia/Taipei"
+  cron:
+    build: ./cron 
+    depends_on:
+      - ihateline
