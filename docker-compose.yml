@@ -9,6 +9,11 @@ services:
     environment:
       - "TZ=Asia/Taipei"
     command: python server.py
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
+      driver: json-file
   chrome:
     image: selenium/standalone-chrome 
     shm_size: 4g
@@ -16,9 +21,19 @@ services:
       - 44444:4444
     environment:
       - "TZ=Asia/Taipei"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
+      driver: json-file
   cron:
     build: ./cron 
     depends_on:
       - ihateline
     volumes:
       - "./cron/crontabs:/etc/crontabs/root:ro"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
+      driver: json-file
