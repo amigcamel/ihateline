@@ -147,3 +147,4 @@ src/chromedriver
 ipython_config.py
 credentials.conf
 .session
+cron/crontabs
