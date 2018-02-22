@@ -211,3 +211,39 @@ class Browser:
                 for e in es
             }
         return self._friends
+
+    def upload_img(self, uri):
+        """Upload images."""
+        # open local image in a new tab
+        self.driver.execute_script(
+            f'''window.open("{uri}");''')
+        sleep(0.5)
+        # make driver focus on the the new tab
+        self.driver.switch_to_window(self.driver.window_handles[-1])
+        # copy image
+        (
+            self.driver
+            .find_element_by_tag_name('body')
+            .send_keys(Keys.CONTROL, 'c')
+        )
+        sleep(0.5)
+        # close current tab
+        self.driver.close()
+        # switch back to the original tab
+        self.driver.switch_to_window(self.driver.window_handles[-1])
+        # click chat box
+        chat_box = self.driver.find_element_by_id('_chat_room_input')
+        chat_box.click()
+        # paste image
+        chat_box.send_keys(Keys.CONTROL, 'v')
+        sleep(0.5)
+        # submit
+        chat_box.send_keys(Keys.ENTER)
+        sleep(0.5)
+        # randomly click at any place to loose focus on the input box
+        # so that LINE will still send sound notifications to your mobile
+        (
+            self.driver
+            .find_element_by_css_selector('li[data-type=friends_list')
+            .click()
+        )
