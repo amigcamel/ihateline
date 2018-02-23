@@ -4,10 +4,13 @@ services:
   ihateline:
     restart: always
     build: . 
+    volumes:
+      - shared-volume:/tmp/shared
     depends_on:
       - chrome
     environment:
       - "TZ=Asia/Taipei"
+      - "pixabay_key="
     command: python server.py
     logging:
       options:
@@ -16,6 +19,8 @@ services:
       driver: json-file
   chrome:
     image: selenium/standalone-chrome 
+    volumes:
+      - shared-volume:/tmp/shared
     shm_size: 4g
     ports:
       - 44444:4444
@@ -37,3 +42,5 @@ services:
         max-size: '10m'
         max-file: '3'
       driver: json-file
+volumes:
+  shared-volume:
