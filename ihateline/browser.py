@@ -215,9 +215,8 @@ class Browser:
     def upload_img(self, uri):
         """Upload images."""
         # open local image in a new tab
-        self.driver.execute_script(
-            f'''window.open("{uri}");''')
-        sleep(0.5)
+        self.driver.execute_script(f'window.open("{uri}", "_blank");')
+        sleep(2)
         # make driver focus on the the new tab
         self.driver.switch_to_window(self.driver.window_handles[-1])
         # copy image
