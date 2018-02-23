@@ -1,6 +1,7 @@
 """Main."""
 from os.path import isfile
 from time import sleep
+import pickle
 import json
 import re
 import os
@@ -137,6 +138,11 @@ class Browser:
             json.dump(info, f)
             logger.debug(f'dump session cache: {info}')
 
+    def pickle_driver(self):
+        """Pickle instance of `ihateline.browser.Browser`."""
+        with open('/tmp/browser.pkl', 'wb') as f:
+            pickle.dump(self, f)
+
     def send_msg(self, message):
         """Send message.
 
@@ -249,3 +255,14 @@ class Browser:
         logger.debug('submitting')
         ele.send_keys(Keys.RETURN)
         logger.debug('done!')
+
+
+def get_browser():
+    """Get or create browser."""
+    if isfile('/tmp/browser.pkl'):
+        with open('/tmp/browser.pkl', 'rb') as f:
+            browser = pickle.load(f)
+        os.remove('/tmp/browser.pkl')
+    else:
+        browser = Browser()
+    return browser
