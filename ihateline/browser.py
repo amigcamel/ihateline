@@ -242,19 +242,21 @@ class Browser:
         sleep(0.5)
         logger.debug('switching back to the main tab')
         self.driver.switch_to.window(self.driver.window_handles[0])
-        sleep(0.5)
+        sleep(1)
         logger.debug('locating chat box')
         ele = self.driver.find_element_by_id('_chat_room_input')
         sleep(0.5)
         logger.debug('clicking chat box')
         ele.click()
-        sleep(0.5)
+        sleep(1)
         logger.debug('pasting image to chat box')
         ele.send_keys(Keys.CONTROL, 'v')
-        sleep(0.5)
+        sleep(5)
         logger.debug('submitting')
         ele.send_keys(Keys.RETURN)
         logger.debug('done!')
+        # randomly click at any place to loose focus on the input box
+        self.driver.find_element_by_tag_name('body').click()
 
 
 def get_browser():
