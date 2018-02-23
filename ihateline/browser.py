@@ -212,37 +212,40 @@ class Browser:
             }
         return self._friends
 
-    def upload_img(self, uri):
-        """Upload images."""
-        # open local image in a new tab
-        self.driver.execute_script(f'window.open("{uri}", "_blank");')
-        sleep(2)
-        # make driver focus on the the new tab
-        self.driver.switch_to_window(self.driver.window_handles[-1])
-        # copy image
+    def send_img(self, uri):
+        """Send image.
+
+        Args:
+        - uri: image path (file://) or url (http://)
+        """
+        logger.debug('opening new tab')
+        self.driver.execute_script(f'window.open("{uri}")')
+        sleep(0.5)
+        logger.debug('switching to newly opened tab')
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        sleep(0.5)
+        logger.debug('copying image')
         (
             self.driver
             .find_element_by_tag_name('body')
             .send_keys(Keys.CONTROL, 'c')
         )
-        sleep(0.5)
-        # close current tab
+        sleep(5)
+        logger.debug('closing tab')
         self.driver.close()
-        # switch back to the original tab
-        self.driver.switch_to_window(self.driver.window_handles[-1])
-        # click chat box
-        chat_box = self.driver.find_element_by_id('_chat_room_input')
-        chat_box.click()
-        # paste image
-        chat_box.send_keys(Keys.CONTROL, 'v')
         sleep(0.5)
-        # submit
-        chat_box.send_keys(Keys.ENTER)
+        logger.debug('switching back to the main tab')
+        self.driver.switch_to.window(self.driver.window_handles[0])
         sleep(0.5)
-        # randomly click at any place to loose focus on the input box
-        # so that LINE will still send sound notifications to your mobile
-        (
-            self.driver
-            .find_element_by_css_selector('li[data-type=friends_list')
-            .click()
-        )
+        logger.debug('locating chat box')
+        ele = self.driver.find_element_by_id('_chat_room_input')
+        sleep(0.5)
+        logger.debug('clicking chat box')
+        ele.click()
+        sleep(0.5)
+        logger.debug('pasting image to chat box')
+        ele.send_keys(Keys.CONTROL, 'v')
+        sleep(0.5)
+        logger.debug('submitting')
+        ele.send_keys(Keys.RETURN)
+        logger.debug('done!')
