@@ -15,7 +15,7 @@ services:
         max-file: '3'
       driver: json-file
   chrome:
-    image: selenium/standalone-chrome 
+    image: selenium/standalone-chrome:3.9.1-actinium
     shm_size: 4g
     ports:
       - 44444:4444
