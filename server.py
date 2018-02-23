@@ -1,4 +1,5 @@
 """Socket server."""
+from time import sleep
 import socketserver
 import os
 
@@ -24,7 +25,9 @@ class TCPHandler(socketserver.StreamRequestHandler):
 if __name__ == "__main__":
     b = Browser()
     b.login()
-    b.cache_session_info()
+    sleep(10)
+    b.pickle_driver()
+    # b.cache_session_info()
     HOST, PORT = '', 9999
 
     with socketserver.TCPServer((HOST, PORT), TCPHandler) as server:
