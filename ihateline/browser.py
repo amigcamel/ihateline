@@ -1,6 +1,7 @@
 """Main."""
 from os.path import isfile
 from time import sleep
+import pickle
 import json
 import re
 import os
@@ -137,6 +138,11 @@ class Browser:
             json.dump(info, f)
             logger.debug(f'dump session cache: {info}')
 
+    def pickle_driver(self):
+        """Pickle instance of `ihateline.browser.Browser`."""
+        with open('/tmp/browser.pkl', 'wb') as f:
+            pickle.dump(self, f)
+
     def send_msg(self, message):
         """Send message.
 
@@ -211,3 +217,54 @@ class Browser:
                 for e in es
             }
         return self._friends
+
+    def send_img(self, uri):
+        """Send image.
+
+        Args:
+        - uri: image path (file://) or url (http://)
+        """
+        logger.debug('opening new tab')
+        self.driver.execute_script(f'window.open("{uri}")')
+        sleep(0.5)
+        logger.debug('switching to newly opened tab')
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        sleep(0.5)
+        logger.debug('copying image')
+        (
+            self.driver
+            .find_element_by_tag_name('body')
+            .send_keys(Keys.CONTROL, 'c')
+        )
+        sleep(5)
+        logger.debug('closing tab')
+        self.driver.close()
+        sleep(0.5)
+        logger.debug('switching back to the main tab')
+        self.driver.switch_to.window(self.driver.window_handles[0])
+        sleep(1)
+        logger.debug('locating chat box')
+        ele = self.driver.find_element_by_id('_chat_room_input')
+        sleep(0.5)
+        logger.debug('clicking chat box')
+        ele.click()
+        sleep(1)
+        logger.debug('pasting image to chat box')
+        ele.send_keys(Keys.CONTROL, 'v')
+        sleep(5)
+        logger.debug('submitting')
+        ele.send_keys(Keys.RETURN)
+        logger.debug('done!')
+        # randomly click at any place to loose focus on the input box
+        self.driver.find_element_by_tag_name('body').click()
+
+
+def get_browser():
+    """Get or create browser."""
+    if isfile('/tmp/browser.pkl'):
+        with open('/tmp/browser.pkl', 'rb') as f:
+            browser = pickle.load(f)
+        os.remove('/tmp/browser.pkl')
+    else:
+        browser = Browser()
+    return browser
