@@ -12,13 +12,12 @@ Well, `ihateline` could be your best friend!
 
 ## Prerequisites
 
-### `credentials.conf`
+### Environment variables
 
-Save your account and password in `credentials.conf`.
 
-    [main]
-    email = youremail@whatever.swag
-    password = yourpasswordhere
+    PIXABAYKEY=<Pixabay API key>
+    EMAIL=<youremail@whatever.swag>
+    PASSWORD=<yourpasswordhere>
 
 Pack your LINE Chrome extension and put it in ` src`.
 
