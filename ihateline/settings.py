@@ -1,6 +1,6 @@
 """Settings."""
 from os.path import join, dirname, abspath
-from configparser import ConfigParser
+import os
 
 ROOT_DIR = dirname(dirname(abspath(__file__)))
 UID = 'ophjlpahpchlmihnnnihgmmeilfjmjjc'
@@ -11,7 +11,5 @@ EXTENSTION_PATH = join(ROOT_DIR, f'src/Extensions/{UID}/2.1.0_0.crx')
 SESSION_CACHE_PATH = join(ROOT_DIR, '.session')
 
 # credentials
-config = ConfigParser()
-config.read(join(ROOT_DIR, 'credentials.conf'))
-EMAIL = config['main']['email']
-PASSWORD = config['main']['password']
+EMAIL = os.environ['EMAIL']
+PASSWORD = os.environ['PASSWORD']
