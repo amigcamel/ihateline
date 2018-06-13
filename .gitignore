@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/vim,osx,python
 
 ### OSX ###
@@ -148,3 +147,5 @@ ipython_config.py
 credentials.conf
 .session
 cron/crontabs
+.envrc
+geckodriver.log
